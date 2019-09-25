@@ -73,11 +73,13 @@ public class TampilData extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ListMemo.clear();
+
+                //data snapshot berguna untuk memasukan data ke arraylist dari Class Memo
                 for (DataSnapshot SnapshotMemo :dataSnapshot.getChildren()){
                     Memo memo = SnapshotMemo.getValue(Memo.class);
                     ListMemo.add(memo);
                 }
-
+                    //memasukan modelmemo adapter agar tampilannya sesuai dengan yang sudah kita tentukan
                     ModelMemo adapter = new ModelMemo(TampilData.this,ListMemo);
                     ListViewMemo.setAdapter(adapter);
 
@@ -93,6 +95,8 @@ public class TampilData extends AppCompatActivity {
         });
     }
 
+    //menampilkan update dialog
+    //memakai constructor agar ketika dipanggil bisa di masukkan apa saja yang akan di intent
     private void showUpdateDialog(final String MemoId, final String MemoTitle, final  String MemoSubtitle, final String MemoDate){
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
@@ -110,10 +114,9 @@ public class TampilData extends AppCompatActivity {
         buttonUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Context mcontext;
-                Memo memo = new Memo();
+                Context mcontext; // tidak terpakai
+                Memo memo = new Memo(); // tidak terpakai
                 Intent intent = new Intent(TampilData.this,TambahDatas.class);
-
                 intent.putExtra("TXT_TANGGAL",MemoDate);
                 intent.putExtra("TEXT_TITLE",MemoTitle);
                 intent.putExtra("TEXT_SUBTITLE",MemoSubtitle);
@@ -121,10 +124,6 @@ public class TampilData extends AppCompatActivity {
                 intent.putExtra("ACTION","EDIT");
 
                 startActivity(intent);
-
-
-
-
             }
         });
 
@@ -135,14 +134,9 @@ public class TampilData extends AppCompatActivity {
             }
         });
 
-
-
-
-
-
-
     }
 
+    //delete memo berdasarkan id pada tabel memo pada firebase
     private  void deleteMemo(String id){
         DatabaseReference DatabaseMemo =FirebaseDatabase.getInstance().getReference("Memo").child(id);
 

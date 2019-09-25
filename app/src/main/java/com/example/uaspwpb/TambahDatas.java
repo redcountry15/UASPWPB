@@ -45,26 +45,27 @@ public class TambahDatas extends AppCompatActivity {
         final String tanggal = intent.getStringExtra("TEXT_DATE");
         final String subtitle = intent.getStringExtra("TEXT_SUBTITLE");
         String action = intent.getStringExtra("ACTION");
-
+       //ketika action yang didaptkan itu tidak sama dengan kosong / null
         if (action!= null){
+            //jika action yang didapat sama dengan edit maka kite nge set edit text dari nilai yang suda kita dapatkan
+            // melalui getStringExtra
             if (action.equals("EDIT")){
                 editTitle.setText(title);
                 editSubTitle.setText(subtitle);
-                getSupportActionBar().setTitle("Ubah Data");
                 btnAdd.setText("Ubah");
             }
         }
-
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                //ketika teks yang berada di BtnAdd sama dengan ubah maka akan menjalankan fungsi dibawah
                 if(btnAdd.getText().toString().equalsIgnoreCase("Ubah")){
-
+                    // nah disini itu berfungi untuk mengupdate yang ada di database
                     String titles = editTitle.getText().toString();
                     String subtitles = editSubTitle.getText().toString();
-                    updateMemo(id,tanggal,titles,subtitles);
+                    updateMemo(id,titles,subtitles);
                 }else {
+                    //ketika kondisi falase maka  fungsi addmemo akan dijalankan
                     AddMemo();
                 }
             }
@@ -74,21 +75,28 @@ public class TambahDatas extends AppCompatActivity {
 
     }
 
-    private boolean updateMemo(String id,  String date, String title , String subtitle){
+    //fungsi update memo
+    private boolean updateMemo( String id,String title , String subtitle){
         DatabaseReference databaseReference  = FirebaseDatabase.getInstance().getReference("Memo").child(id);
+        String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
 
-        Memo memo = new Memo(title,date,subtitle,id);
+        Memo memo = new Memo(title,currentDate,subtitle,id);
+        //set value yang berfunsgi untuk mengupdate database dengan data yang sudah kita perbaharui
         databaseReference.setValue(memo);
 
         Toast.makeText(this, "Updated Succesfully", Toast.LENGTH_SHORT).show();
         return  true;
     }
 
+
+    //menambahkan memo
     public void AddMemo(){
+
+        //mengambil nilai dari edit text
         String title = editTitle.getText().toString().trim();
         String subTitle = editSubTitle.getText().toString().trim();
         String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-
+        //dimasukan ke dalam database dengan menggunakan nilai yang sudah diambil dari editText
         if (!TextUtils.isEmpty(title)){
             String id = DatabaseMemo.push().getKey();
             Memo memo = new Memo(title,currentDate,subTitle,id);
